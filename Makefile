@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: praders <praders@student.42.fr>            +#+  +:+       +#+         #
+#    By: mprazere <mprazere@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/21 16:34:39 by mprazere          #+#    #+#              #
-#    Updated: 2025/06/17 17:50:48 by praders          ###   ########.fr        #
+#    Updated: 2025/06/18 12:41:54 by mprazere         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ LIBFT_DIR = ./libraries/libft
 LIBFT = $(LIBFT_DIR)/libft.a
 PIPEX_A = libpipex.a
 
-SRCS = srcs/pipex.c srcs/p_error.c srcs/p_utils.c #srcs/p_path.c  \
+SRCS = srcs/pipex.c srcs/p_error.c srcs/p_utils.c srcs/p_path.c  \
 
 OBJS = $(SRCS:.c=.o)
 

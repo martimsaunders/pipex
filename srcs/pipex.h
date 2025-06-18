@@ -2,9 +2,12 @@
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   pipex.h                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
+/*                                                    +:+ +:+
+	+:+     */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+
+	+#+        */
+/*                                                +#+#+#+#+#+
+	+#+           */
 /*   Created: 2025/06/17 13:26:12 by marvin            #+#    #+#             */
 /*   Updated: 2025/06/17 13:26:12 by marvin           ###   ########.fr       */
 /*                                                                            */
@@ -22,11 +25,20 @@
 # include <sys/wait.h>
 # include <unistd.h>
 
-void    error_exit(char *msg);
-void safe_close(int *fd);
-void    handle_error(char *msg, int *infile, int *outfile, int pipe_fd[2]);
-void    close_all(int *infile, int *outfile, int pipe_fd[2]);
+typedef struct s_pipex
+{
+	int infile;
+	int outfile;
+	int pipe_fd[2];
+	pid_t pid[2];
+} t_pipex;
+
+int	execute_cmd(char *cmd, char **envp);
+void	error_exit(char *msg);
+void	safe_close(int *fd);
+void	handle_error(char *msg, t_pipex *var);
+void	close_all(t_pipex *var);
 void	free_args(char **newstr);
-int execute_cmd(char *cmd, char **envp);
+char	*find_path(char *cmd, char **envp);
 
 #endif
