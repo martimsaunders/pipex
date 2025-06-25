@@ -15,98 +15,86 @@
 
 #include "pipex_bonus.h"
 
-static void allocate_pipes_pid(t_pipex *var)
+static void	last_process(char **argv, t_pipex *var, char **envp, int argc)
 {
-	int i;
+	var->pid = fork();
+	if (var->pid < 0)
+		handle_error("Process ID error", var);
+	if (var->pid == 0)
+	{
+		open_outfile(argv, argc, var);
+		child_process(var->infile, var->outfile, var);
+		close(var->infile);
+		close(var->outfile);
+		if (execute_cmd(argv[argc - 2], envp))
+			handle_error("Command parsing failed", var);
+	}
+	close(var->infile);
+	waitpid(var->pid, NULL, 0);
+}
 
-	i = 0;
-	var->pipes = malloc(sizeof(int *) * (var->cmd_count - 1));
-	if (!var->pipes)
-		handle_error("Pipes allocation error", var);
+static void	mid_child_process(char **argv, t_pipex *var, char **envp)
+{
+	int	i;
+
+	i = 1;
 	while (i < var->cmd_count - 1)
 	{
-		var->pipes[i] = malloc(sizeof(int) * 2);
-		if (!var->pipes[i])
+		if (pipe(var->pipes) < 0)
+			handle_error("Pipe error", var);
+		var->pid = fork();
+		if (var->pid < 0)
+			handle_error("Process ID error", var);
+		if (var->pid == 0)
 		{
-			while (--i >= 0)
-				free(var->pipes[i]);
-			free(var->pipes);
-			handle_error("Pipes allocation error", var);
-		}
-		if (pipe(var->pipes[i]) < 0)
-			handle_error("Pipe creation error", var);
-		i++;
-	}
-	var->pid = malloc(sizeof(int) * var->cmd_count);
-	if (!var->pid)
-		handle_error("Pid creation error", var);
-}
-
-static void mid_child_process(char **argv, t_pipex *var, char **envp)
-{
-	int i;
-
-	i = -1;
-	while (++i < var->cmd_count - 2)
-	{
-		var->pid[i + 1] = fork();
-		if (var->pid[i + 1] < 0)
-			handle_error("Proccess ID error", var);
-		if (var->pid[i + 1] == 0)
-		{
-			child_process(var->pipes[i][0], var->pipes[i + 1][1], var);
-			if (execute_cmd(argv[i + 3], envp))
+			close(var->pipes[0]);
+			child_process(var->infile, var->pipes[1], var);
+			close(var->infile);
+			close(var->pipes[1]);
+			if (execute_cmd(argv[var->first_cmd + i], envp))
 				handle_error("Command parsing failed", var);
 		}
+		close(var->infile);
+		close(var->pipes[1]);
+		var->infile = var->pipes[0];
+		waitpid(var->pid, NULL, 0);
+		i++;
 	}
 }
 
-static void	files_and_pipe(char **argv, t_pipex *var, int argc)
+static void	open_infile(char **argv, t_pipex *var)
 {
 	var->infile = open(argv[1], O_RDONLY);
 	if (var->infile < 0)
-		error_exit("Input file error");
-	var->outfile = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (var->outfile < 0)
-	{
-		close(var->infile);
-		error_exit("Output file error");
-	}
-	allocate_pipes_pid(var);
+		perror("Input file error");
 }
 
-static void	pipex(char **argv, char **envp, t_pipex *var)
+static void	pipex(char **argv, char **envp, t_pipex *var, int argc)
 {
-	int i;
-
-	var->pid[0] = fork();
-	if (var->pid[0] < 0)
-		handle_error("Proccess ID error", var);
-	if (var->pid[0] == 0)
+	if (pipe(var->pipes) < 0)
+		handle_error("Pipe error", var);
+	var->pid = fork();
+	if (var->pid < 0)
+		handle_error("Process ID error", var);
+	if (var->pid == 0)
 	{
-		child_process(var->infile, var->pipes[0][1], var);
-		if (execute_cmd(argv[2], envp))
+		close(var->pipes[0]);
+		child_process(var->infile, var->pipes[1], var);
+		close(var->infile);
+		close(var->pipes[1]);
+		if (execute_cmd(argv[var->first_cmd], envp))
 			handle_error("Command parsing failed", var);
 	}
+	close(var->pipes[1]);
+	var->infile = var->pipes[0];
+	waitpid(var->pid, NULL, 0);
 	mid_child_process(argv, var, envp);
-	var->pid[var->cmd_count - 1] = fork();
-	if (var->pid[var->cmd_count - 1] < 0)
-		handle_error("Proccess ID error", var);
-	if (var->pid[var->cmd_count - 1] == 0)
-	{
-		child_process(var->pipes[var->cmd_count - 2][0], var->outfile, var);
-		if (execute_cmd(argv[var->cmd_count + 1], envp))
-			handle_error("Command parsing failed", var);
-	}
-	close_all(var);
-	i = -1;
-	while (++i < var->cmd_count)
-		waitpid(var->pid[i], NULL, 0);
+	last_process(argv, var, envp, argc);
 }
 
 int	main(int argc, char **argv, char **envp)
 {
-	t_pipex var;
+	t_pipex	var;
 
 	if (argc < 5)
 	{
@@ -114,10 +102,19 @@ int	main(int argc, char **argv, char **envp)
 		return (1);
 	}
 	ft_memset(&var, 0, sizeof(t_pipex));
-	var.cmd_count = argc - 3;
-	files_and_pipe(argv, &var, argc);
-	pipex(argv, envp, &var);
-	free_pipes(&var);
-	free(var.pid);
+	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
+	{
+		var.cmd_count = argc - 4;
+		here_doc(argv, &var);
+		var.first_cmd = 3;
+	}
+	else
+	{
+		var.cmd_count = argc - 3;
+		open_infile(argv, &var);
+		var.first_cmd = 2;
+	}
+	pipex(argv, envp, &var, argc);
+	close_all(&var);
 	return (0);
 }

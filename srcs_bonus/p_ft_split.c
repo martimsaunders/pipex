@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_split.c                                         :+:      :+:    :+:   */
+/*   p_ft_split.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mprazere <mprazere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 10:36:48 by mprazere          #+#    #+#             */
-/*   Updated: 2025/06/24 15:58:07 by mprazere         ###   ########.fr       */
+/*   Updated: 2025/06/25 18:42:20 by mprazere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,18 @@
 static int	count_words(char const *s1, char const c)
 {
 	size_t	count;
+	int		i;
+	int		count_plicas;
+	int		even;
 
+	even = 0;
 	count = 0;
 	while (*s1)
 	{
+		if (*s1 == '\'')
+		{
+			count++;
+		}
 		while (*s1 == c)
 			s1++;
 		if (*s1)
@@ -59,7 +67,24 @@ static void	free_split(char **newstr, size_t j)
 	free(newstr);
 }
 
-char	**ft_split(char const *s, char c)
+static int	count_plicas(char const *s1)
+{
+	int	i;
+	int	countplicas;
+
+	i = 0;
+	countplicas = 0;
+	while (*s1)
+	{
+		if (*s1 == '\'')
+			countplicas++;
+		s1++;
+	}
+	if ((countplicas % 2) != 0)
+		return (1);
+}
+
+char	**ft_split_pipex(char const *s, char c)
 {
 	size_t	words;
 	size_t	i;
@@ -67,22 +92,20 @@ char	**ft_split(char const *s, char c)
 	size_t	j;
 
 	i = 0;
-	j = 0;
+	j = -1;
 	if (!s)
+		return (NULL);
+	if (count_plicas(s))
 		return (NULL);
 	words = count_words(s, c);
 	newstr = malloc(sizeof(char *) * (words + 1));
 	if (!newstr)
 		return (NULL);
-	while (j < words)
+	while (++j < words)
 	{
 		newstr[j] = allocate_string(s, c, &i);
 		if (!newstr[j])
-		{
-			free_split(newstr, j);
-			return (NULL);
-		}
-		j++;
+			return (free_split(newstr, j), NULL);
 	}
 	newstr[j] = NULL;
 	return (newstr);

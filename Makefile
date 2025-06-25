@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: praders <praders@student.42.fr>            +#+  +:+       +#+         #
+#    By: mprazere <mprazere@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/21 16:34:39 by mprazere          #+#    #+#              #
-#    Updated: 2025/06/23 15:40:07 by praders          ###   ########.fr        #
+#    Updated: 2025/06/25 17:41:42 by mprazere         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,8 @@ SRCS = srcs/pipex.c srcs/p_error.c srcs/p_utils.c srcs/p_path.c  \
 OBJS = $(SRCS:.c=.o)
 
 BONUS_SRCS = srcs_bonus/pipex_bonus.c srcs_bonus/p_error_bonus.c \
-srcs_bonus/p_utils_bonus.c srcs_bonus/p_path_bonus.c  \
+srcs_bonus/p_utils_bonus.c srcs_bonus/p_path_bonus.c srcs_bonus/p_here_doc.c \
+srcs_bonus/p_ft_split.c \
 
 BONUS_OBJS = $(BONUS_SRCS:.c=.o)
 

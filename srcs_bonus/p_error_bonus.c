@@ -18,10 +18,6 @@
 void	handle_error(char *msg, t_pipex *var)
 {
 	close_all(var);
-	if (var->pipes)
-		free_pipes(var);
-	if (var->pid)
-		free(var->pid);
 	error_exit(msg);
 }
 

@@ -28,20 +28,23 @@
 typedef struct s_pipex
 {
 	int		infile;
+	int		first_cmd;
 	int		outfile;
-	int		**pipes;
+	int		def_out;
+	int		pipes[2];
 	int		cmd_count;
-	pid_t	*pid;
-} 			t_pipex;
+	pid_t	pid;
+}			t_pipex;
 
-int		execute_cmd(char *cmd, char **envp);
-void	safe_close(int *fd);
-void	error_exit(char *msg);
-void	close_all(t_pipex *var);
-void	free_args(char **newstr);
-void	free_pipes(t_pipex *var);
-char	*find_path(char *cmd, char **envp);
-void	handle_error(char *msg, t_pipex *var);
-void	child_process(int infile, int outfile, t_pipex *var);
+int			execute_cmd(char *cmd, char **envp);
+void		safe_close(int *fd);
+void		error_exit(char *msg);
+void		close_all(t_pipex *var);
+void		free_args(char **newstr);
+char		*find_path(char *cmd, char **envp);
+void		here_doc(char **argv, t_pipex *var);
+void		handle_error(char *msg, t_pipex *var);
+void		open_outfile(char **argv, int argc, t_pipex *var);
+void		child_process(int infile, int outfile, t_pipex *var);
 
 #endif
