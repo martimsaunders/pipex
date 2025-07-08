@@ -6,7 +6,7 @@
 #    By: mprazere <mprazere@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/21 16:34:39 by mprazere          #+#    #+#              #
-#    Updated: 2025/06/25 17:41:42 by mprazere         ###   ########.fr        #
+#    Updated: 2025/06/26 13:21:16 by mprazere         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,17 +14,11 @@ NAME = pipex
 LIBFT_DIR = ./libraries/libft
 LIBFT = $(LIBFT_DIR)/libft.a
 PIPEX_A = libpipex.a
-BONUS_NAME = pipex_bonus
 
-SRCS = srcs/pipex.c srcs/p_error.c srcs/p_utils.c srcs/p_path.c  \
+SRCS = srcs/pipex.c srcs/p_error.c srcs/p_utils.c srcs/p_path.c \
+srcs/p_here_doc.c srcs/p_ft_split.c srcs/p_utils_split.c \
 
 OBJS = $(SRCS:.c=.o)
-
-BONUS_SRCS = srcs_bonus/pipex_bonus.c srcs_bonus/p_error_bonus.c \
-srcs_bonus/p_utils_bonus.c srcs_bonus/p_path_bonus.c srcs_bonus/p_here_doc.c \
-srcs_bonus/p_ft_split.c \
-
-BONUS_OBJS = $(BONUS_SRCS:.c=.o)
 
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g
@@ -43,23 +37,17 @@ $(NAME): $(OBJS) $(MAIN)
 	@$(CC) $(CFLAGS) $(OBJS) -L$(LIBFT_DIR) -lft -o $(NAME)
 	@echo 'pipex compilado com libft!'
 
-bonus: $(BONUS_NAME)
-
-$(BONUS_NAME): $(LIBFT) $(BONUS_OBJS)
-	@$(CC) $(CFLAGS) $(BONUS_OBJS) -L$(LIBFT_DIR) -lft -o $(BONUS_NAME)
-	@echo 'pipex_bonus compilado com libft!'
-
 clean:
-	@rm -f $(OBJS) $(BONUS_OBJS)
+	@rm -f $(OBJS)
 	@rm -f $(PIPEX_A)
 	@$(MAKE) -C $(LIBFT_DIR) clean
 	@echo 'Objetos limpos!'
 
 fclean: clean
-	@rm -f $(NAME) $(BONUS_NAME)
+	@rm -f $(NAME)
 	@$(MAKE) -C $(LIBFT_DIR) fclean
 	@echo 'Tudo limpo!'
 
 re: fclean all
 
-.PHONY: all clean fclean re bonus
+.PHONY: all clean fclean re

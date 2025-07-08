@@ -21,15 +21,6 @@ void	handle_error(char *msg, t_pipex *var)
 	error_exit(msg);
 }
 
-void	safe_close(int *fd)
-{
-	if (*fd >= 0)
-	{
-		close(*fd);
-		*fd = -1;
-	}
-}
-
 void	error_exit(char *msg)
 {
 	perror(msg);

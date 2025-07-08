@@ -17,8 +17,8 @@
 
 static char	*find_path_envp(char **envp)
 {
-	char *path;
-	int i;
+	char	*path;
+	int		i;
 
 	i = 0;
 	path = NULL;
@@ -33,11 +33,11 @@ static char	*find_path_envp(char **envp)
 
 char	*find_path(char *cmd, char **envp)
 {
-	char *first_path;
-	char *full_path;
-	char **path;
-	char *temp;
-	int	i;
+	char	*first_path;
+	char	*full_path;
+	char	**path;
+	char	*temp;
+	int		i;
 
 	i = 0;
 	first_path = find_path_envp(envp);
@@ -59,10 +59,10 @@ char	*find_path(char *cmd, char **envp)
 
 int	execute_cmd(char *cmd, char **envp)
 {
-	char **cmd_args;
-	char *path;
+	char	**cmd_args;
+	char	*path;
 
-	cmd_args = ft_split(cmd, ' ');
+	cmd_args = ft_split_with_quotes(cmd, ' ', -1, 0);
 	if (!cmd_args)
 		return (1);
 	path = find_path(cmd_args[0], envp);

@@ -6,11 +6,11 @@
 /*   By: mprazere <mprazere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 13:09:22 by mprazere          #+#    #+#             */
-/*   Updated: 2025/06/25 17:27:05 by mprazere         ###   ########.fr       */
+/*   Updated: 2025/06/26 15:13:05 by mprazere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex_bonus.h"
+#include "pipex.h"
 
 void	here_doc(char **argv, t_pipex *var)
 {
