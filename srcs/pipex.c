@@ -30,15 +30,13 @@ static void	last_process(char **argv, t_pipex *var, char **envp, int argc)
 			handle_error("Command parsing failed", var);
 	}
 	close(var->infile);
-	waitpid(var->pid, NULL, 0);
 }
 
-static void	mid_child_process(char **argv, t_pipex *var, char **envp)
+static void	mid_child_process(char **argv, t_pipex *var, char **envp, int i)
 {
-	int	i;
+	int	prev_pipe;
 
-	i = 1;
-	while (i < var->cmd_count - 1)
+	while (++i < var->cmd_count - 1)
 	{
 		if (pipe(var->pipes) < 0)
 			handle_error("Pipe error", var);
@@ -54,11 +52,11 @@ static void	mid_child_process(char **argv, t_pipex *var, char **envp)
 			if (execute_cmd(argv[var->first_cmd + i], envp))
 				handle_error("Command parsing failed", var);
 		}
-		close(var->infile);
+		prev_pipe = var->infile;
 		close(var->pipes[1]);
 		var->infile = var->pipes[0];
-		waitpid(var->pid, NULL, 0);
-		i++;
+		if (prev_pipe != STDIN_FILENO)
+			close(prev_pipe);
 	}
 }
 
@@ -71,6 +69,9 @@ static void	open_infile(char **argv, t_pipex *var)
 
 static void	pipex(char **argv, char **envp, t_pipex *var, int argc)
 {
+	int	i;
+
+	i = -1;
 	if (pipe(var->pipes) < 0)
 		handle_error("Pipe error", var);
 	var->pid = fork();
@@ -87,9 +88,11 @@ static void	pipex(char **argv, char **envp, t_pipex *var, int argc)
 	}
 	close(var->pipes[1]);
 	var->infile = var->pipes[0];
-	waitpid(var->pid, NULL, 0);
-	mid_child_process(argv, var, envp);
+	mid_child_process(argv, var, envp, 0);
 	last_process(argv, var, envp, argc);
+	waitpid(var->pid, NULL, 0);
+	while (++i < var->cmd_count - 1)
+		wait(NULL);
 }
 
 int	main(int argc, char **argv, char **envp)
