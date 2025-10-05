@@ -26,7 +26,8 @@ make
 
 ---
 
-# Standard Pipeline
+## Usage
+### Standard Pipeline
 ```bash
 ./pipex infile "cmd1" "cmd2" outfile
 ```
@@ -34,7 +35,7 @@ Equivalent to:
 ```bash
 < infile cmd1 | cmd2 > outfile
 ```
-# Multiple Commands
+### Multiple Commands
 ```bash
 ./pipex infile "cmd1" "cmd2" "cmd3" ... "cmdN" outfile
 ```
@@ -42,7 +43,7 @@ Equivalent to:
 ```bash
 < infile cmd1 | cmd2 | cmd3 | ... | cmdN > outfile
 ```
-# Here Document
+### Here Document
 ```bash
 ./pipex here_doc LIMITER "cmd1" "cmd2" outfile
 ```
