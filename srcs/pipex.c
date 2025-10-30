@@ -106,7 +106,7 @@ int	main(int argc, char **argv, char **envp)
 		return (1);
 	}
 	ft_memset(&var, 0, sizeof(t_pipex));
-	if (ft_strncmp(argv[1], "here_doc", 8) == 0)
+	if (ft_strncmp(argv[1], "here_doc", 9) == 0)
 	{
 		var.cmd_count = argc - 4;
 		here_doc(argv, &var);

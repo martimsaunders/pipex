@@ -1,13 +1,12 @@
-File 1
-File 1
-File 1
-valorv
-File 1
-valorv
-File 1
-valorv
-File 2
-valor
-File2
-2
-2
+      0       0       0
+      0       0       0
+      0       0       0
+      1       1       4
+      0       0       0
+      0       0       0
+      1       1       4
+      0       1       3
+      0       0       0
+      0       2       8
+      0       1       3
+      0       3      14

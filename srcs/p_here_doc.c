@@ -6,7 +6,7 @@
 /*   By: mprazere <mprazere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/24 13:09:22 by mprazere          #+#    #+#             */
-/*   Updated: 2025/06/26 15:13:05 by mprazere         ###   ########.fr       */
+/*   Updated: 2025/10/30 12:35:07 by mprazere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,13 @@ void	here_doc(char **argv, t_pipex *var)
 		handle_error("Pipe creation error", var);
 	limiter = ft_strlen(argv[2]);
 	line = get_next_line(STDIN_FILENO);
-	while (line && ft_strncmp(line, argv[2], limiter))
+	line[ft_strlen(line) - 1] = '\0';
+	while (line && ft_strncmp(line, argv[2], limiter + 1))
 	{
 		ft_putstr_fd(line, temp_fd[1]);
 		free(line);
 		line = get_next_line(STDIN_FILENO);
+		line[ft_strlen(line) - 1] = '\0';
 	}
 	free(line);
 	close(temp_fd[1]);
